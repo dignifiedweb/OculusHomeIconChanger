@@ -47,6 +47,8 @@
             this.dgvAppList = new System.Windows.Forms.DataGridView();
             this.grpEditApp = new System.Windows.Forms.GroupBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.txtSteamIDFound = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.button9 = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
@@ -84,8 +86,6 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.btnRestartOculusService = new System.Windows.Forms.Button();
             this.toolTipRestartOculusButton = new System.Windows.Forms.ToolTip(this.components);
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtSteamIDFound = new System.Windows.Forms.TextBox();
             this.grpAppsList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpDisplayFilter.SuspendLayout();
@@ -320,6 +320,22 @@
             this.groupBox2.TabIndex = 14;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Load Image Data From The Web";
+            // 
+            // txtSteamIDFound
+            // 
+            this.txtSteamIDFound.Location = new System.Drawing.Point(252, 30);
+            this.txtSteamIDFound.Name = "txtSteamIDFound";
+            this.txtSteamIDFound.Size = new System.Drawing.Size(100, 27);
+            this.txtSteamIDFound.TabIndex = 13;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(184, 34);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(71, 19);
+            this.label1.TabIndex = 12;
+            this.label1.Text = "Steam ID:";
             // 
             // groupBox4
             // 
@@ -686,22 +702,6 @@
             this.btnRestartOculusService.UseVisualStyleBackColor = true;
             this.btnRestartOculusService.Click += new System.EventHandler(this.btnRestartOculusService_Click);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(184, 34);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(71, 19);
-            this.label1.TabIndex = 12;
-            this.label1.Text = "Steam ID:";
-            // 
-            // txtSteamIDFound
-            // 
-            this.txtSteamIDFound.Location = new System.Drawing.Point(252, 30);
-            this.txtSteamIDFound.Name = "txtSteamIDFound";
-            this.txtSteamIDFound.Size = new System.Drawing.Size(100, 27);
-            this.txtSteamIDFound.TabIndex = 13;
-            // 
             // OculusHomeIconChanger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -717,7 +717,7 @@
             this.MaximizeBox = false;
             this.Name = "OculusHomeIconChanger";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "OculusHomeIconChanger by Jonathan Carewick - alpha 2";
+            this.Text = "OculusHomeIconChanger by Jonathan Carewick - alpha 3";
             this.Load += new System.EventHandler(this.OculusHomeIconChanger_Load);
             this.grpAppsList.ResumeLayout(false);
             this.grpAppsList.PerformLayout();

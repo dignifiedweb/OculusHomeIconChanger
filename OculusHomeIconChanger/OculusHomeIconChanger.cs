@@ -429,6 +429,17 @@ namespace OculusHomeIconChangerNS
 
                 // Set the icon to the new image
                 selectedApp.icon = new Bitmap((Bitmap)selectedApp.cover_square_image.Clone(), new Size(ICON_WIDTH, ICON_WIDTH));
+
+                // For compatability with image formats, convert the cover_landscape_image and small_landscape image as well
+                Bitmap cover_landscape_image = new Bitmap(pic_cover_landscape_image.Width, pic_cover_landscape_image.Height);
+                pic_cover_landscape_image.DrawToBitmap(cover_landscape_image, pic_cover_landscape_image.ClientRectangle);
+                selectedApp.cover_landscape_image = cover_landscape_image;
+
+                Bitmap small_landscape_image = new Bitmap(pic_small_landscape_image.Width, pic_small_landscape_image.Height);
+                pic_small_landscape_image.DrawToBitmap(small_landscape_image, pic_small_landscape_image.ClientRectangle);
+                selectedApp.small_landscape_image = small_landscape_image;
+
+
                 RefreshDataGridViewMain();
             }
         }
@@ -689,6 +700,7 @@ namespace OculusHomeIconChangerNS
 
         private void btnChangeImageButtons(object sender, EventArgs e)
         {
+            btnSave.Enabled = true;
             Button btnSender = (Button)sender; // btn_pic_cover_square_image
             string picBoxName = btnSender.Name.Replace("btn_", ""); //pic_cover_square_image
             Control[] controls = this.Controls.Find(picBoxName, true);
