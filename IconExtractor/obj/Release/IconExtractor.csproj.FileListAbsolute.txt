@@ -1,0 +1,4 @@
+D:\Projects\Programming\VRKiosk\VRKiosk-VisualStudio\IconExtractor\bin\Release\IconExtractor.dll
+D:\Projects\Programming\VRKiosk\VRKiosk-VisualStudio\IconExtractor\bin\Release\IconExtractor.pdb
+D:\Projects\Programming\VRKiosk\VRKiosk-VisualStudio\IconExtractor\obj\Release\IconExtractor.dll
+D:\Projects\Programming\VRKiosk\VRKiosk-VisualStudio\IconExtractor\obj\Release\IconExtractor.pdb

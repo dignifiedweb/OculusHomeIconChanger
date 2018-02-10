@@ -1,0 +1,5 @@
+D:\Projects\Programming\VRKiosk\VRKiosk-VisualStudio\VRKiosk\bin\Release\VRKiosk.exe.config
+D:\Projects\Programming\VRKiosk\VRKiosk-VisualStudio\VRKiosk\obj\Release\VRKiosk.csprojResolveAssemblyReference.cache
+D:\Projects\Programming\VRKiosk\VRKiosk-VisualStudio\VRKiosk\obj\Release\VRKiosk.Properties.Resources.resources
+D:\Projects\Programming\VRKiosk\VRKiosk-VisualStudio\VRKiosk\obj\Release\VRKiosk.VrKioskMain.resources
+D:\Projects\Programming\VRKiosk\VRKiosk-VisualStudio\VRKiosk\obj\Release\VRKiosk.csproj.GenerateResource.Cache
