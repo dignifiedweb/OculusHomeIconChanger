@@ -43,6 +43,13 @@ namespace OculusHomeIconChangerNS
             _oculusHomeManifestLocation = _oculusHomeLocation + @"\CoreData\Manifests";
             _oculusHomeImagesLocation = _oculusHomeLocation + @"\CoreData\Software\StoreAssets";
 
+            // Fix for legacy pre-dash (rift core 2.0) Oculus home
+            if (!Directory.Exists(_oculusHomeImagesLocation))
+            {
+                _oculusHomeManifestLocation = _oculusHomeLocation + @"\Software\Manifests";
+                _oculusHomeImagesLocation = _oculusHomeLocation + @"\Software\StoreAssets";
+            }
+
             this.Text += " - WARNING: backup your \"" + _oculusHomeLocation + "\\CoreData\" Folder";
         }
 
