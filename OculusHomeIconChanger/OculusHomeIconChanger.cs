@@ -41,14 +41,19 @@ namespace OculusHomeIconChangerNS
 
             _oculusHomeAppsList = new List<OculusHomeAppListItem>();
             _oculusHomeLocation = GetOculusDirFromRegistry();
-            _oculusHomeManifestLocation = _oculusHomeLocation + @"\CoreData\Manifests";
-            _oculusHomeImagesLocation = _oculusHomeLocation + @"\CoreData\Software\StoreAssets";
+            string appDataManifestLocation = ConfigurationManager.AppSettings["manifestlocation"];
+            string appdataImagesLocation = ConfigurationManager.AppSettings["imageslocation"];
 
-            // Fix for legacy pre-dash (rift core 2.0) Oculus home
-            if (!Directory.Exists(_oculusHomeImagesLocation))
+            // Check if the appData config has been changed by user, if so just use those direct paths, nothing else
+            if (appDataManifestLocation != "[DefaultManifestLocationReplaceIfYouWantToCustomize]" && appdataImagesLocation != "[DefaultImagesLocationReplaceIfYouWantToCustomize]")
             {
-                _oculusHomeManifestLocation = _oculusHomeLocation + @"\Software\Manifests";
-                _oculusHomeImagesLocation = _oculusHomeLocation + @"\Software\StoreAssets";
+                _oculusHomeManifestLocation = appDataManifestLocation;
+                _oculusHomeImagesLocation = appdataImagesLocation;
+            }
+            else
+            {
+                _oculusHomeManifestLocation = _oculusHomeLocation + @"\CoreData\Manifests";
+                _oculusHomeImagesLocation = _oculusHomeLocation + @"\CoreData\Software\StoreAssets";
             }
 
             this.Text += " - WARNING: backup your \"" + _oculusHomeLocation + "\\CoreData\" Folder";
@@ -59,18 +64,11 @@ namespace OculusHomeIconChangerNS
         #region "Main Form Load"
         private void OculusHomeIconChanger_Load(object sender, EventArgs e)
         {
-            // Check for the manifest and images locations based on what we found in constructor
+            // Prevent an unhandled exception by asking user to configure the directory in the app.config
             if (!Directory.Exists(_oculusHomeManifestLocation) || !Directory.Exists(_oculusHomeImagesLocation))
             {
-                _oculusHomeManifestLocation = ConfigurationManager.AppSettings["manifestlocation"];
-                _oculusHomeImagesLocation = ConfigurationManager.AppSettings["imageslocation"];
-
-                // Prevent an unhandled exception by asking user to configure the directory in the app.config
-                if (!Directory.Exists(_oculusHomeManifestLocation) || !Directory.Exists(_oculusHomeImagesLocation))
-                {
-                    MessageBox.Show("ERROR: could not find the oculus home manifest files\r\n\r\nYou can configure OculusHomeIconChanger.exe.config yourself, there are two directories to manually set and notes in the file.\r\n\r\nOculus Home location found: " + _oculusHomeLocation, "Oculus Home Manifest Files Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                MessageBox.Show("ERROR: could not find the oculus home manifest files\r\n\r\nYou can configure OculusHomeIconChanger.exe.config yourself, there are two directories to manually set and notes in the file.\r\n\r\nOculus Home location found: " + _oculusHomeLocation, "Oculus Home Manifest Files Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
 
             string[] oculusHomeAssetsManifestFiles = Directory.GetFiles(_oculusHomeManifestLocation, "*_assets.json");

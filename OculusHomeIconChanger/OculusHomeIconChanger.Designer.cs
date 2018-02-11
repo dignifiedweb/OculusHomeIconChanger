@@ -717,7 +717,7 @@
             this.MaximizeBox = false;
             this.Name = "OculusHomeIconChanger";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "OculusHomeIconChanger by Jonathan Carewick - alpha 5";
+            this.Text = "OculusHomeIconChanger by Jonathan Carewick - alpha 6";
             this.Load += new System.EventHandler(this.OculusHomeIconChanger_Load);
             this.grpAppsList.ResumeLayout(false);
             this.grpAppsList.PerformLayout();
