@@ -16,6 +16,7 @@ using TsudaKageyu;
 using Microsoft.Win32;
 using System.Threading;
 using System.Diagnostics;
+using System.Configuration;
 
 namespace OculusHomeIconChangerNS
 {
@@ -58,6 +59,20 @@ namespace OculusHomeIconChangerNS
         #region "Main Form Load"
         private void OculusHomeIconChanger_Load(object sender, EventArgs e)
         {
+            // Check for the manifest and images locations based on what we found in constructor
+            if (!Directory.Exists(_oculusHomeManifestLocation) || !Directory.Exists(_oculusHomeImagesLocation))
+            {
+                _oculusHomeManifestLocation = ConfigurationManager.AppSettings["manifestlocation"];
+                _oculusHomeImagesLocation = ConfigurationManager.AppSettings["imageslocation"];
+
+                // Prevent an unhandled exception by asking user to configure the directory in the app.config
+                if (!Directory.Exists(_oculusHomeManifestLocation) || !Directory.Exists(_oculusHomeImagesLocation))
+                {
+                    MessageBox.Show("ERROR: could not find the oculus home manifest files\r\n\r\nYou can configure OculusHomeIconChanger.exe.config yourself, there are two directories to manually set and notes in the file.\r\n\r\nOculus Home location found: " + _oculusHomeLocation, "Oculus Home Manifest Files Not Found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
             string[] oculusHomeAssetsManifestFiles = Directory.GetFiles(_oculusHomeManifestLocation, "*_assets.json");
             string siblingFilenameTemp = "";
             Array.Sort(oculusHomeAssetsManifestFiles);
