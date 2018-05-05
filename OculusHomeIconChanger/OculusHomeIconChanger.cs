@@ -30,6 +30,8 @@ namespace OculusHomeIconChangerNS
         private Bitmap _selectedIconImageOrig;
         private Bitmap _selectedCoverSquareImageOrig;
         private SteamRootObject _steamJsonRoot;
+        private int _visibleRowsCount;
+        private bool _attemptListFullAppsOnce;
 
         public const int ICON_WIDTH = 64;
 
@@ -39,6 +41,7 @@ namespace OculusHomeIconChangerNS
         {
             InitializeComponent();
 
+            _attemptListFullAppsOnce = false;
             _oculusHomeAppsList = new List<OculusHomeAppListItem>();
             _oculusHomeLocation = GetOculusDirFromRegistry();
             string appDataManifestLocation = ConfigurationManager.AppSettings["manifestlocation"];
@@ -528,18 +531,31 @@ namespace OculusHomeIconChangerNS
 
         private void radShowAllApps_CheckedChanged(object sender, EventArgs e)
         {
-            dgvAppList.CurrentCell = null;
-            foreach (DataGridViewRow row in dgvAppList.Rows)
+            // JCarewick - DEBUG - May 4 2018
+            if (radShowAllApps.Checked)
             {
-                row.Visible = true;
-            }
 
-            // Select first dispalyed app and reset pictures to that
-            //Application.DoEvents();
-            dgvAppList.FirstDisplayedCell.Selected = true;
-            DataGridViewRow selectedRow = dgvAppList.Rows[dgvAppList.FirstDisplayedCell.RowIndex];
-            OculusHomeAppListItem selectedApp = (OculusHomeAppListItem)selectedRow.DataBoundItem;
-            SetGUIItemsToSelectedApp(selectedApp);
+                dgvAppList.CurrentCell = null;
+                _visibleRowsCount = 0;
+                foreach (DataGridViewRow row in dgvAppList.Rows)
+                {
+                    row.Visible = true;
+                    _visibleRowsCount++;
+                }
+
+                // Select first dispalyed app and reset pictures to that
+                // JCarewick - DEBUG - May 4 2018
+                if (dgvAppList.DataSource != null)
+                {
+                    dgvAppList.FirstDisplayedCell.Selected = true;
+                    DataGridViewRow selectedRow = dgvAppList.Rows[dgvAppList.FirstDisplayedCell.RowIndex];
+                    OculusHomeAppListItem selectedApp = (OculusHomeAppListItem)selectedRow.DataBoundItem;
+                    SetGUIItemsToSelectedApp(selectedApp);
+                }
+
+                // JCarewick - DEBUG - May 4 2018
+                SelectAppInDataGrid();
+            }
         }
 
         private void radSortByDateAsc_CheckedChanged(object sender, EventArgs e)
@@ -564,22 +580,32 @@ namespace OculusHomeIconChangerNS
 
         private void radShowOnlySteamApps_CheckedChanged(object sender, EventArgs e)
         {
-            dgvAppList.CurrentCell = null;
-            foreach (DataGridViewRow row in dgvAppList.Rows)
+            // JCarewick - DEBUG - May 4 2018
+            if (radShowOnlySteamApps.Checked)
             {
-                if (row.Cells["canonicalName"].Value.ToString().ToLower().Contains("steamapps"))
+                dgvAppList.CurrentCell = null;
+                _visibleRowsCount = 0;
+                foreach (DataGridViewRow row in dgvAppList.Rows)
                 {
-                    List<OculusHomeAppListItem> steamApp = (from apps in _oculusHomeAppsList
-                                                             where apps.canonicalName.ToLower().Contains("steamapps")
-                                                             && apps.steamID != null
-                                                             && apps.canonicalName == row.Cells["canonicalName"].Value.ToString()
-                                                             select apps).ToList();
-
-                    if (steamApp.Count == 1)
+                    if (row.Cells["canonicalName"].Value.ToString().ToLower().Contains("steamapps"))
                     {
-                        if (SteamGameHasVRSupport(steamApp[0].steamID))
+                        List<OculusHomeAppListItem> steamApp = (from apps in _oculusHomeAppsList
+                                                                where apps.canonicalName.ToLower().Contains("steamapps")
+                                                                && apps.steamID != null
+                                                                && apps.canonicalName == row.Cells["canonicalName"].Value.ToString()
+                                                                select apps).ToList();
+
+                        if (steamApp.Count == 1)
                         {
-                            row.Visible = true;
+                            if (SteamGameHasVRSupport(steamApp[0].steamID))
+                            {
+                                row.Visible = true;
+                                _visibleRowsCount++;
+                            }
+                            else
+                            {
+                                row.Visible = false;
+                            }
                         }
                         else
                         {
@@ -591,17 +617,21 @@ namespace OculusHomeIconChangerNS
                         row.Visible = false;
                     }
                 }
-                else
-                {
-                    row.Visible = false;
-                }
-            }
 
-            // Select first dispalyed app and reset pictures to that
-            dgvAppList.FirstDisplayedCell.Selected = true;
-            DataGridViewRow selectedRow = dgvAppList.Rows[dgvAppList.FirstDisplayedCell.RowIndex];
-            OculusHomeAppListItem selectedApp = (OculusHomeAppListItem)selectedRow.DataBoundItem;
-            SetGUIItemsToSelectedApp(selectedApp);
+                // JCarewick - DEBUG - May 4 2018
+                if (dgvAppList.DataSource != null && dgvAppList.FirstDisplayedCell != null)
+                {
+                    // Select first dispalyed app and reset pictures to that
+                    dgvAppList.FirstDisplayedCell.Selected = true;
+                    DataGridViewRow selectedRow = dgvAppList.Rows[dgvAppList.FirstDisplayedCell.RowIndex];
+                    OculusHomeAppListItem selectedApp = (OculusHomeAppListItem)selectedRow.DataBoundItem;
+                    SetGUIItemsToSelectedApp(selectedApp);
+                }
+
+                // JCarewick - DEBUG - May 4 2018
+                SelectAppInDataGrid();
+
+            }
         }
 
         private void rad_icon_image_stretched_CheckedChanged(object sender, EventArgs e)
@@ -659,62 +689,70 @@ namespace OculusHomeIconChangerNS
         private void btnGetSteamBanners_Click(object sender, EventArgs e)
         {
             // Load banners for Steam App ID if found
-            DataGridViewRow selectedRow = dgvAppList.SelectedRows[0];
-            OculusHomeAppListItem selectedApp = (OculusHomeAppListItem)selectedRow.DataBoundItem;
-            string steamIdForApp = "";
-
-            if (txtSteamIDFound.Text.Length > 0)
+            if (dgvAppList.SelectedRows.Count > 0)
             {
-                steamIdForApp = txtSteamIDFound.Text;
+                DataGridViewRow selectedRow = dgvAppList.SelectedRows[0];
+                OculusHomeAppListItem selectedApp = (OculusHomeAppListItem)selectedRow.DataBoundItem;
+                string steamIdForApp = "";
+
+                if (txtSteamIDFound.Text.Length > 0)
+                {
+                    steamIdForApp = txtSteamIDFound.Text;
+                }
+                else
+                {
+                    steamIdForApp = GetSteamAppID(selectedApp.displayName);
+                    txtSteamIDFound.Text = steamIdForApp;
+                    selectedApp.steamID = steamIdForApp;
+                }
+
+                if (steamIdForApp == null)
+                {
+                    MessageBox.Show("Steam ID not found for " + selectedApp.displayName, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                btnSave.Enabled = true;
+
+                try
+                {
+                    string steamHeader = @"http://cdn.edgecast.steamstatic.com/steam/apps/" + steamIdForApp + "/header.jpg";
+                    string steamCapsule616x353 = @"http://cdn.edgecast.steamstatic.com/steam/apps/" + steamIdForApp + "/capsule_616x353.jpg";
+                    string steamCapsule467x181 = @"http://cdn.edgecast.steamstatic.com/steam/apps/" + steamIdForApp + "/capsule_467x181.jpg";
+                    string steamHeader292x136 = @"http://cdn.edgecast.steamstatic.com/steam/apps/" + steamIdForApp + "/header_292x136.jpg";
+
+                    selectedApp.icon_image = new Bitmap(GetBitmapFromWebsite(steamHeader), new Size(245, 115)); // copy @ 245px X 115 (53.33333% of header)
+                    selectedApp.cover_square_image = GetBitmapFromWebsite(steamHeader); // steamHeader 192x192
+                    selectedApp.cover_landscape_image = GetBitmapFromWebsite(steamCapsule616x353);
+                    selectedApp.small_landscape_image = GetBitmapFromWebsite(steamCapsule467x181);
+                    selectedApp.icon = new Bitmap((Bitmap)selectedApp.small_landscape_image.Clone(), new Size(ICON_WIDTH, ICON_WIDTH));
+
+                    SetGUIItemsToSelectedApp(selectedApp);
+                    RefreshDataGridViewMain();
+
+                    // Now, save a copy of the cover_square_image and icon_image to be used to edit with the picture box
+                    // the state of the picturebox is then saved to the selectedApp
+
+                    // Get Dominant color of steam image and set the picturebox background to that color
+                    Color dominantColor = GetDominantColor(selectedApp.cover_square_image);
+                    pic_cover_square_image.BackColor = dominantColor;
+                    pic_icon_image.BackColor = dominantColor;
+
+                    // Set photo column to changed to be able to save only photos changed
+                    selectedApp.photosChanged = true;
+
+                    // Save the picturebox to the selected app
+                    GrabImageFromPictureBoxAndSave(selectedApp);
+
+                }
+                catch (WebException ex)
+                {
+                    MessageBox.Show("No banner found for steam id: " + steamIdForApp, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             else
             {
-                steamIdForApp = GetSteamAppID(selectedApp.displayName);
-                txtSteamIDFound.Text = steamIdForApp;
-            }
-
-            if (steamIdForApp == null)
-            {
-                MessageBox.Show("Steam ID not found for " + selectedApp.displayName, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            btnSave.Enabled = true;
-
-            try
-            {
-                string steamHeader = @"http://cdn.edgecast.steamstatic.com/steam/apps/" + steamIdForApp + "/header.jpg";
-                string steamCapsule616x353 = @"http://cdn.edgecast.steamstatic.com/steam/apps/" + steamIdForApp + "/capsule_616x353.jpg";
-                string steamCapsule467x181 = @"http://cdn.edgecast.steamstatic.com/steam/apps/" + steamIdForApp + "/capsule_467x181.jpg";
-                string steamHeader292x136 = @"http://cdn.edgecast.steamstatic.com/steam/apps/" + steamIdForApp + "/header_292x136.jpg";
-
-                selectedApp.icon_image = new Bitmap(GetBitmapFromWebsite(steamHeader), new Size(245, 115)); // copy @ 245px X 115 (53.33333% of header)
-                selectedApp.cover_square_image = GetBitmapFromWebsite(steamHeader); // steamHeader 192x192
-                selectedApp.cover_landscape_image = GetBitmapFromWebsite(steamCapsule616x353);
-                selectedApp.small_landscape_image = GetBitmapFromWebsite(steamCapsule467x181);
-                selectedApp.icon = new Bitmap((Bitmap)selectedApp.small_landscape_image.Clone(), new Size(ICON_WIDTH, ICON_WIDTH));
-
-                SetGUIItemsToSelectedApp(selectedApp);
-                RefreshDataGridViewMain();
-
-                // Now, save a copy of the cover_square_image and icon_image to be used to edit with the picture box
-                // the state of the picturebox is then saved to the selectedApp
-
-                // Get Dominant color of steam image and set the picturebox background to that color
-                Color dominantColor = GetDominantColor(selectedApp.cover_square_image);
-                pic_cover_square_image.BackColor = dominantColor;
-                pic_icon_image.BackColor = dominantColor;
-
-                // Set photo column to changed to be able to save only photos changed
-                selectedApp.photosChanged = true;
-
-                // Save the picturebox to the selected app
-                GrabImageFromPictureBoxAndSave(selectedApp);
-
-            }
-            catch (WebException ex)
-            {
-                MessageBox.Show("No banner found for steam id: " + steamIdForApp, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error Finding Steam ID\nTry selecting \"all third party apps\" radio button", "Error Finding Steam ID", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -894,13 +932,19 @@ namespace OculusHomeIconChangerNS
 
         private void txtAppName_TextChanged(object sender, EventArgs e)
         {
-            DataGridViewRow selectedRow = dgvAppList.SelectedRows[0];
-            OculusHomeAppListItem selectedApp = (OculusHomeAppListItem)selectedRow.DataBoundItem;
-            if (selectedApp.displayName != txtAppName.Text)
+            if (txtAppName.Text.Length > 0)
             {
-                btnSave.Enabled = true;
-                selectedApp.displayName = txtAppName.Text;
-                selectedApp.nameChanged = true;
+                DataGridViewRow selectedRow = dgvAppList.SelectedRows[0];
+                if (selectedRow != null)
+                {
+                    OculusHomeAppListItem selectedApp = (OculusHomeAppListItem)selectedRow.DataBoundItem;
+                    if (selectedApp.displayName != txtAppName.Text)
+                    {
+                        btnSave.Enabled = true;
+                        selectedApp.displayName = txtAppName.Text;
+                        selectedApp.nameChanged = true;
+                    }
+                }
             }
         }
 
@@ -936,11 +980,17 @@ namespace OculusHomeIconChangerNS
         /// </summary>
         private void SelectAppInDataGrid()
         {
-            if (dgvAppList.Rows.Count > 0)
+            if ((dgvAppList.Rows.Count > 0 && _visibleRowsCount > 0) || (txtSearch.Text.Length > 0 && dgvAppList.Rows.Count > 0))
             {
                 DataGridViewRow selectedRow = dgvAppList.SelectedRows[0];
                 OculusHomeAppListItem selectedApp = (OculusHomeAppListItem)selectedRow.DataBoundItem;
                 SetGUIItemsToSelectedApp(selectedApp);
+            }
+            // If original load of steam apps is blank, try loading full list
+            else if (radShowOnlySteamApps.Checked && _attemptListFullAppsOnce == false)
+            {
+                radShowAllApps.Checked = true;
+                _attemptListFullAppsOnce = true;
             }
             else
             {
@@ -954,7 +1004,23 @@ namespace OculusHomeIconChangerNS
         /// </summary>
         private void ClearEditAppSelectedArea()
         {
-            MessageBox.Show("Should implement this ClearEditAppSelectedArea");
+            // JCarewick - DEBUG - May 4 2018
+
+            txtAppName.Text = "";
+            txtSteamIDFound.Text = "";
+            pic_small_landscape_image.Image = null;
+            pic_icon_image.Image = null;
+            pic_cover_square_image.Image = null;
+            pic_cover_landscape_image.Image = null;
+
+            if (radShowOnlySteamApps.Checked)
+            {
+                MessageBox.Show("No games found with the name 'steamapps' in manifest filename, which is normally where steam games are located (in a steamapps folder somewhere)", "No 'steamapps' found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                MessageBox.Show("No third party apps found, the manifest folder location may be configured wrong. Try configuring the OculusHomeChanger.exe.config.", "No third party apps found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void SetGUIItemsToSelectedApp(OculusHomeAppListItem selectedApp)
@@ -1021,6 +1087,5 @@ namespace OculusHomeIconChangerNS
 
 
         #endregion
-
     }
 }
