@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace OculusHomeIconChangerNS
 {
     static class Program
     {
+        public static OculusHomeIconChanger mainForm;
+        public static SplashScreen _splashScreen;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        [STAThread]
+        [STAThread] 
         static void Main()
         {
             Application.EnableVisualStyles();
@@ -19,7 +23,10 @@ namespace OculusHomeIconChangerNS
 
             try
             {
-                Application.Run(new OculusHomeIconChanger());
+                mainForm = new OculusHomeIconChanger();
+                _splashScreen = new SplashScreen();
+                _splashScreen.Show();
+                Application.Run(mainForm);
             }
             catch (Exception ex)
             {

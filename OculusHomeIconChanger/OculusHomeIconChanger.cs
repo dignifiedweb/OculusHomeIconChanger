@@ -26,12 +26,15 @@ namespace OculusHomeIconChangerNS
         private string _oculusHomeLocation;
         private string _oculusHomeManifestLocation;
         private string _oculusHomeImagesLocation;
+        private string _oculusHomeManifestSecondaryLocation;
+        private string _oculusHomeImagesSecondaryLocation;
         private DataGridViewButtonColumn _dgvButton;
         private Bitmap _selectedIconImageOrig;
         private Bitmap _selectedCoverSquareImageOrig;
         private SteamRootObject _steamJsonRoot;
         private int _visibleRowsCount;
         private bool _attemptListFullAppsOnce;
+        private bool _formLoaded;
 
         public const int ICON_WIDTH = 64;
 
@@ -42,21 +45,29 @@ namespace OculusHomeIconChangerNS
             InitializeComponent();
 
             _attemptListFullAppsOnce = false;
+            _formLoaded = false;
             _oculusHomeAppsList = new List<OculusHomeAppListItem>();
             _oculusHomeLocation = GetOculusDirFromRegistry();
             string appDataManifestLocation = ConfigurationManager.AppSettings["manifestlocation"];
             string appdataImagesLocation = ConfigurationManager.AppSettings["imageslocation"];
+            string appDataManifestSecondaryLocation = ConfigurationManager.AppSettings["manifestsecondarylocation"];
+            string appdataImagesSecondaryLocation = ConfigurationManager.AppSettings["imagessecondarylocation"];
+
 
             // Check if the appData config has been changed by user, if so just use those direct paths, nothing else
             if (appDataManifestLocation != "[DefaultManifestLocationReplaceIfYouWantToCustomize]" && appdataImagesLocation != "[DefaultImagesLocationReplaceIfYouWantToCustomize]")
             {
                 _oculusHomeManifestLocation = appDataManifestLocation;
                 _oculusHomeImagesLocation = appdataImagesLocation;
+                _oculusHomeManifestSecondaryLocation = appDataManifestSecondaryLocation;
+                _oculusHomeImagesSecondaryLocation = appdataImagesSecondaryLocation;
             }
             else
             {
                 _oculusHomeManifestLocation = _oculusHomeLocation + @"\CoreData\Manifests";
                 _oculusHomeImagesLocation = _oculusHomeLocation + @"\CoreData\Software\StoreAssets";
+                _oculusHomeManifestSecondaryLocation = "";
+                _oculusHomeImagesSecondaryLocation = "";
             }
 
             this.Text += " - WARNING: backup your \"" + _oculusHomeLocation + "\\CoreData\" Folder";
@@ -74,17 +85,59 @@ namespace OculusHomeIconChangerNS
                 return;
             }
 
-            string[] oculusHomeAssetsManifestFiles = Directory.GetFiles(_oculusHomeManifestLocation, "*_assets.json");
+            // JCarewick - DEBUG - May 6 2018
+            // Prevent unhandled exception for secondary manifest location
+            if (_oculusHomeManifestSecondaryLocation.Length > 0 && _oculusHomeImagesSecondaryLocation.Length > 0)
+            {
+                if (!Directory.Exists(_oculusHomeManifestSecondaryLocation) || !Directory.Exists(_oculusHomeImagesSecondaryLocation))
+                {
+                    MessageBox.Show("ERROR with OculusHomeIconChanger.exe.config - the secondary directories you set don't seem to exist", "Error with OculusHomeIconChanger.exe.config", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            // JCarewick - DEBUG - May 6 2018
+            
+            string[] oculusHomeAssetsManifestFiles = Directory.GetFiles(_oculusHomeManifestLocation, "*_*_assets.json");
+            if (_oculusHomeManifestSecondaryLocation.Length > 0 && _oculusHomeImagesSecondaryLocation.Length > 0)
+            {
+                string[] oculusHomeAssetsManifestFilesSecondaryLocation = Directory.GetFiles(_oculusHomeManifestSecondaryLocation, "*_*_assets.json");
+                int countOrigManifestArr = oculusHomeAssetsManifestFiles.Length;
+
+                // Add secondary manifest files to the main array
+                Array.Resize(ref oculusHomeAssetsManifestFiles, countOrigManifestArr + oculusHomeAssetsManifestFilesSecondaryLocation.Length);
+                for (int i = countOrigManifestArr; i < oculusHomeAssetsManifestFiles.Length; i++)
+                {
+                    // Get index of oculusHomeAssetsManifestFilesSecondaryLocation array
+                    int indexOfSecondaryArr = i - countOrigManifestArr;
+
+                    if (indexOfSecondaryArr < oculusHomeAssetsManifestFilesSecondaryLocation.Length)
+                    {
+                        oculusHomeAssetsManifestFiles[i] = oculusHomeAssetsManifestFilesSecondaryLocation[indexOfSecondaryArr];
+                    }
+                }
+            }
+
             string siblingFilenameTemp = "";
             Array.Sort(oculusHomeAssetsManifestFiles);
+            int tempCount = 0;
             foreach (string filenameFullPath in oculusHomeAssetsManifestFiles)
             {
+                tempCount++;
+
                 // Grab Json info into an OculusHomeJsonInfo Object
                 // Add third party games only
                 try
                 {
 
                     siblingFilenameTemp = filenameFullPath.Replace("_assets", "");
+
+                    // JCarewick - DEBUG - May 6 2018
+                    if (!File.Exists(siblingFilenameTemp))
+                    {
+                        siblingFilenameTemp = _oculusHomeManifestLocation + "\\" + Path.GetFileName(siblingFilenameTemp);
+                    }
+
                     if (File.Exists(siblingFilenameTemp))
                     {
                         OculusHomeApp_AssetsJson oculusHomeApp_AssetsJson = GetOculusHomeApp_AssetsJsonFromPath(filenameFullPath);
@@ -94,7 +147,9 @@ namespace OculusHomeIconChangerNS
                             // Only edit third party icons
                             if (oculusHomeApp_AssetsJson.thirdParty)
                             {
-                                siblingFilenameTemp = filenameFullPath.Replace("_assets", "");
+                                // JCarewick - DEBUG - May 6 2018 // Why was this here?
+                                // siblingFilenameTemp = filenameFullPath.Replace("_assets", "");
+
                                 if (File.Exists(siblingFilenameTemp))
                                 {
                                     OculusHomeAppJson oculusHomeAppJson = GetOculusHomeAppJsonFromPath(siblingFilenameTemp);
@@ -107,6 +162,13 @@ namespace OculusHomeIconChangerNS
                                     app.fileModifiedDateTime = File.GetLastWriteTime(siblingFilenameTemp);
 
                                     string imageLoadPath = _oculusHomeImagesLocation + "\\" + app.canonicalName + "_assets\\";
+
+                                    // JCarewick - DEBUG - May 6 2018
+                                    if (filenameFullPath.Contains(_oculusHomeManifestSecondaryLocation) && _oculusHomeManifestSecondaryLocation.Length > 0)
+                                    {
+                                        imageLoadPath = _oculusHomeImagesSecondaryLocation + "\\" + app.canonicalName + "_assets\\";
+                                    }
+
                                     string cover_landscape_image = imageLoadPath + "cover_landscape_image.jpg";
                                     string cover_landscape_image_large = imageLoadPath + "cover_landscape_image_large.jpg";
                                     string cover_square_image = imageLoadPath + "cover_square_image.jpg";
@@ -136,12 +198,21 @@ namespace OculusHomeIconChangerNS
                 {
                     GetSteamAppIdJson();
 
+                    // JCarewick - DEBUG - May 6 2018
+                    //List<OculusHomeAppListItem> steamapps = (from apps in _oculusHomeAppsList
+                    //                                         where (apps.canonicalName.ToLower().Contains("steamapps"))
+                    //                                         select apps).ToList();
                     List<OculusHomeAppListItem> steamapps = (from apps in _oculusHomeAppsList
-                                                             where apps.canonicalName.ToLower().Contains("steamapps")
+                                                             where (apps.canonicalName.ToLower().Contains("steamapps") || apps.displayName.ToLower().Contains("vr"))
                                                              select apps).ToList();
                     foreach (OculusHomeAppListItem steamapp in steamapps)
                     {
-                        steamapp.steamID = GetSteamAppID(steamapp.displayName);
+                        // JCarewick - DEBUG - May 6 2018
+                        string steamId = GetSteamAppID(steamapp.displayName);
+                        if (steamId != null)
+                        {
+                            steamapp.steamID = GetSteamAppID(steamapp.displayName);
+                        }
                     }
 
                 }
@@ -150,8 +221,7 @@ namespace OculusHomeIconChangerNS
                     MessageBox.Show("Error grabbing steam api json", "Error grabbing steam api json", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
-                // Display List in datagridview
-                RefreshDataGridViewMain();
+                // Set datagridview source and sort it
                 radSortByDateDesc.Select();
 
                 _dgvButton = new DataGridViewButtonColumn();
@@ -170,6 +240,7 @@ namespace OculusHomeIconChangerNS
             // Set tooltip on oculus service restart button
             toolTipRestartOculusButton.SetToolTip(btnRestartOculusService, "Required to update icons in Oculus Home");
         }
+
         #endregion
 
         #region "Methods"
@@ -336,6 +407,13 @@ namespace OculusHomeIconChangerNS
                 steamAppStoreInfo = reader.ReadToEnd();
             }
 
+            // JCarewick - DEBUG - May 6 2018
+            // LA Noire VR
+            if (steamId == "81292")
+            {
+
+            }
+
             if (steamAppStoreInfo.ToLower().Contains("vr"))
             {
                 return true;
@@ -352,14 +430,23 @@ namespace OculusHomeIconChangerNS
                                            where apps.name.ToLower().Equals(appname.ToLower())
                                            select apps).ToList();
 
+            // JCarewick - DEBUG - May 6 2018  -delete me
+            if (appname.Contains("Titanic"))
+            {
+
+            }
+
             // If App not found, try stripping out a " VR" at the end of title
             if (steamAppList.Count < 1)
             {
                 // Fix for "Space Pirate Trainer VR"
-                string checkForVREnding = appname.Substring(appname.Length - 3).Trim().ToLower();
-                if (checkForVREnding.Contains("vr"))
+                if (appname.Length > 3)
                 {
-                    appname = appname.ToLower().Replace(checkForVREnding, "").Trim();
+                    string checkForVREnding = appname.Substring(appname.Length - 3).Trim().ToLower();
+                    if (checkForVREnding.Contains("vr"))
+                    {
+                        appname = appname.ToLower().Replace(checkForVREnding, "").Trim();
+                    }
                 }
 
                 // Fix for "VanishingRealms" if an app doesn't contain a space, convert camel casing to spaces
@@ -462,7 +549,6 @@ namespace OculusHomeIconChangerNS
                 pic_small_landscape_image.DrawToBitmap(small_landscape_image, pic_small_landscape_image.ClientRectangle);
                 selectedApp.small_landscape_image = small_landscape_image;
 
-
                 RefreshDataGridViewMain();
             }
         }
@@ -525,8 +611,15 @@ namespace OculusHomeIconChangerNS
 
             // Refresh datagrid and refresh app selected
             RefreshDataGridViewMain();
-            SelectAppInDataGrid();
             ApplySelectedFilter();
+
+            // JCarewick - DEBUG - May 6 2018
+            if (_formLoaded)
+            {
+                SelectAppInDataGrid();
+            }
+
+            _formLoaded = true;
         }
 
         private void radShowAllApps_CheckedChanged(object sender, EventArgs e)
@@ -587,20 +680,40 @@ namespace OculusHomeIconChangerNS
                 _visibleRowsCount = 0;
                 foreach (DataGridViewRow row in dgvAppList.Rows)
                 {
-                    if (row.Cells["canonicalName"].Value.ToString().ToLower().Contains("steamapps"))
-                    {
+                    // JCarewick - DEBUG - May 6 2018
+                    //if (row.Cells["canonicalName"].Value.ToString().ToLower().Contains("steamapps"))
+                    //{
+                        //List<OculusHomeAppListItem> steamApp = (from apps in _oculusHomeAppsList
+                        //                                        where apps.canonicalName.ToLower().Contains("steamapps")
+                        //                                        && apps.steamID != null
+                        //                                        && apps.canonicalName == row.Cells["canonicalName"].Value.ToString()
+                        //                                        select apps).ToList();
+
                         List<OculusHomeAppListItem> steamApp = (from apps in _oculusHomeAppsList
-                                                                where apps.canonicalName.ToLower().Contains("steamapps")
-                                                                && apps.steamID != null
-                                                                && apps.canonicalName == row.Cells["canonicalName"].Value.ToString()
+                                                                where (apps.steamID != null
+                                                                    || apps.displayName.ToLower().Contains("vr"))
+                                                                    && apps.canonicalName == row.Cells["canonicalName"].Value.ToString()
                                                                 select apps).ToList();
 
                         if (steamApp.Count == 1)
                         {
-                            if (SteamGameHasVRSupport(steamApp[0].steamID))
+                            if (steamApp[0].steamID == null)
                             {
-                                row.Visible = true;
-                                _visibleRowsCount++;
+                                String steamIdTest = GetSteamAppID(steamApp[0].displayName);
+                                steamApp[0].steamID = steamIdTest;
+                            }
+
+                            if (steamApp[0].steamID != null)
+                            {
+                                if (SteamGameHasVRSupport(steamApp[0].steamID))
+                                {
+                                    row.Visible = true;
+                                    _visibleRowsCount++;
+                                }
+                                else
+                                {
+                                    row.Visible = false;
+                                }
                             }
                             else
                             {
@@ -611,11 +724,11 @@ namespace OculusHomeIconChangerNS
                         {
                             row.Visible = false;
                         }
-                    }
-                    else
-                    {
-                        row.Visible = false;
-                    }
+                    //}
+                    //else
+                    //{
+                    //    row.Visible = false;
+                    //}
                 }
 
                 // JCarewick - DEBUG - May 4 2018
@@ -716,15 +829,37 @@ namespace OculusHomeIconChangerNS
 
                 try
                 {
-                    string steamHeader = @"http://cdn.edgecast.steamstatic.com/steam/apps/" + steamIdForApp + "/header.jpg";
-                    string steamCapsule616x353 = @"http://cdn.edgecast.steamstatic.com/steam/apps/" + steamIdForApp + "/capsule_616x353.jpg";
-                    string steamCapsule467x181 = @"http://cdn.edgecast.steamstatic.com/steam/apps/" + steamIdForApp + "/capsule_467x181.jpg";
-                    string steamHeader292x136 = @"http://cdn.edgecast.steamstatic.com/steam/apps/" + steamIdForApp + "/header_292x136.jpg";
+                    // JCarewick - DEBUG - May 7 2018
+                    string steamCDNLocation, iconImageToUse, coverImageToUse, coverLandscapeToUse, smallLandscapeToUse;
+                    if (ConfigurationManager.AppSettings["steamCDNLocation"].ToString().Length > 0)
+                    {
+                        steamCDNLocation = ConfigurationManager.AppSettings["steamCDNLocation"].ToString();
+                        iconImageToUse = ConfigurationManager.AppSettings["iconImageToUse"].ToString();
+                        coverImageToUse = ConfigurationManager.AppSettings["coverImageToUse"].ToString();
+                        coverLandscapeToUse = ConfigurationManager.AppSettings["coverLandscapeToUse"].ToString();
+                        smallLandscapeToUse = ConfigurationManager.AppSettings["smallLandscapeToUse"].ToString();
+                    }
+                    else
+                    {
+                        steamCDNLocation = @"http://cdn.edgecast.steamstatic.com/steam/apps/";
+                        iconImageToUse = "header.jpg";
+                        coverImageToUse = "header.jpg";
+                        coverLandscapeToUse = "capsule_616x353.jpg";
+                        smallLandscapeToUse = "capsule_467x181.jpg";
+                    }
 
-                    selectedApp.icon_image = new Bitmap(GetBitmapFromWebsite(steamHeader), new Size(245, 115)); // copy @ 245px X 115 (53.33333% of header)
-                    selectedApp.cover_square_image = GetBitmapFromWebsite(steamHeader); // steamHeader 192x192
-                    selectedApp.cover_landscape_image = GetBitmapFromWebsite(steamCapsule616x353);
-                    selectedApp.small_landscape_image = GetBitmapFromWebsite(steamCapsule467x181);
+                    string iconImageFullPath = steamCDNLocation + steamIdForApp + "/" + iconImageToUse;
+                    string coverSquareFullPath = steamCDNLocation + steamIdForApp + "/" + coverImageToUse;
+                    string coverLandscapeFullPath = steamCDNLocation + steamIdForApp + "/" + coverLandscapeToUse;
+                    string smallLandscapeFullPath = steamCDNLocation + steamIdForApp + "/" + smallLandscapeToUse;
+
+                    // Not used:
+                    //string steamHeader292x136 = steamCDNLocation + steamIdForApp + "/header_292x136.jpg";
+
+                    selectedApp.icon_image = new Bitmap(GetBitmapFromWebsite(iconImageFullPath), new Size(245, 115)); // copy @ 245px X 115 (53.33333% of header)
+                    selectedApp.cover_square_image = GetBitmapFromWebsite(coverSquareFullPath); // steamHeader 192x192
+                    selectedApp.cover_landscape_image = GetBitmapFromWebsite(coverLandscapeFullPath);
+                    selectedApp.small_landscape_image = GetBitmapFromWebsite(smallLandscapeFullPath);
                     selectedApp.icon = new Bitmap((Bitmap)selectedApp.small_landscape_image.Clone(), new Size(ICON_WIDTH, ICON_WIDTH));
 
                     SetGUIItemsToSelectedApp(selectedApp);
@@ -785,12 +920,23 @@ namespace OculusHomeIconChangerNS
                 try
                 {
                     string imgPath = _oculusHomeImagesLocation + "\\" + app.canonicalName + "_assets";
-                    app.icon_image.Save(imgPath + "\\icon_image.jpg", ImageFormat.Jpeg);
-                    app.cover_landscape_image.Save(imgPath + "\\cover_landscape_image.jpg", ImageFormat.Jpeg);
-                    app.cover_square_image.Save(imgPath + "\\cover_square_image.jpg", ImageFormat.Jpeg);
-                    app.small_landscape_image.Save(imgPath + "\\small_landscape_image.jpg", ImageFormat.Jpeg);
 
-                    photoChangeSuccess = true;
+                    // JCarewick - DEBUG - May 6 2018
+                    // Accomodate the secondary manifest and image directory
+                    if (!Directory.Exists(imgPath))
+                    {
+                        imgPath = _oculusHomeImagesSecondaryLocation + "\\" + app.canonicalName + "_assets";
+                    }
+
+                    if (Directory.Exists(imgPath))
+                    {
+                        app.icon_image.Save(imgPath + "\\icon_image.jpg", ImageFormat.Jpeg);
+                        app.cover_landscape_image.Save(imgPath + "\\cover_landscape_image.jpg", ImageFormat.Jpeg);
+                        app.cover_square_image.Save(imgPath + "\\cover_square_image.jpg", ImageFormat.Jpeg);
+                        app.small_landscape_image.Save(imgPath + "\\small_landscape_image.jpg", ImageFormat.Jpeg);
+
+                        photoChangeSuccess = true;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -804,7 +950,7 @@ namespace OculusHomeIconChangerNS
                 }
             }
 
-            // Get apps that have images that need to be saved
+            // Get apps that have names that need to be saved
             List<OculusHomeAppListItem> appsWithNameChanges = (from apps in _oculusHomeAppsList
                                                                 where apps.nameChanged == true
                                                                 select apps).ToList();
@@ -819,8 +965,12 @@ namespace OculusHomeIconChangerNS
                     {
                         // Didn't have time to do this proper, just a placeholder find replace in textfile, then re-save the json file
                         string readJsonAsText = File.ReadAllText(appJsonFileToEdit);
-                        string displayNameOrig = "\"displayName\":\"" + app.displayNameOrig + "\"";
-                        string displayNameNew = "\"displayName\":\"" + app.displayName + "\"";
+                        
+                        // JCarewick - DEBUG - May 6 2018
+                        //string displayNameOrig = "\"displayName\":\"" + app.displayNameOrig + "\"";
+                        //string displayNameNew = "\"displayName\":\"" + app.displayName + "\"";
+                        string displayNameOrig = "\"" + app.displayNameOrig + "\",";
+                        string displayNameNew = "\"" + app.displayName + "\",";
                         readJsonAsText = readJsonAsText.Replace(displayNameOrig, displayNameNew);
                         File.WriteAllText(appJsonFileToEdit, readJsonAsText);
                         nameChangeSuccess = true;
@@ -989,7 +1139,7 @@ namespace OculusHomeIconChangerNS
             // If original load of steam apps is blank, try loading full list
             else if (radShowOnlySteamApps.Checked && _attemptListFullAppsOnce == false)
             {
-                radShowAllApps.Checked = true;
+                radShowAllApps.Select();
                 _attemptListFullAppsOnce = true;
             }
             else
@@ -1054,14 +1204,27 @@ namespace OculusHomeIconChangerNS
         {
             OpenFileDialog diag = new OpenFileDialog();
             diag.Filter = "Image Files (*.png, *.jpg, *.bmp, *.exe)|*.png;*.jpg;*.bmp;*.exe";
+
+            DataGridViewRow selectedRow = dgvAppList.SelectedRows[0];
+            OculusHomeAppListItem selectedApp = (OculusHomeAppListItem)selectedRow.DataBoundItem;
+
+            // Accomodate the secondary manifest and image directory
+            string imgPath = _oculusHomeImagesLocation + "\\" + selectedApp.canonicalName + "_assets";
+            if (!Directory.Exists(imgPath))
+            {
+                imgPath = _oculusHomeImagesSecondaryLocation + "\\" + selectedApp.canonicalName + "_assets";
+            }
+
+            // If dir exists, browse to where the images are located
+            if (Directory.Exists(imgPath))
+            {
+                diag.InitialDirectory = imgPath;
+            }
             DialogResult result = diag.ShowDialog();
 
             if (result.Equals(DialogResult.OK))
             {
                 picBox.Image = GetBitmapFromFile(diag.FileName);
-
-                DataGridViewRow selectedRow = dgvAppList.SelectedRows[0];
-                OculusHomeAppListItem selectedApp = (OculusHomeAppListItem)selectedRow.DataBoundItem;
                 selectedApp.photosChanged = true;
 
                 switch (picBox.Name)

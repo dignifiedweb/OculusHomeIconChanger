@@ -26,6 +26,7 @@ D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\OculusHomeIconC
 D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\OculusHomeIconChanger\obj\Debug\OculusHomeIconChanger.csproj.ResolveComReference.cache
 D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\OculusHomeIconChanger\obj\Debug\OculusHomeIconChangerNS.OculusHomeIconChanger.resources
 D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\OculusHomeIconChanger\obj\Debug\OculusHomeIconChangerNS.Properties.Resources.resources
+D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\OculusHomeIconChanger\obj\Debug\OculusHomeIconChangerNS.SplashScreen.resources
 D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\OculusHomeIconChanger\obj\Debug\OculusHomeIconChanger.csproj.GenerateResource.Cache
 D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\OculusHomeIconChanger\obj\Debug\OculusHomeIconChanger.exe
 D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\OculusHomeIconChanger\obj\Debug\OculusHomeIconChanger.pdb
