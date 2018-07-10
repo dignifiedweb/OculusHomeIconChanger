@@ -706,6 +706,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.BackgroundImage = global::OculusHomeIconChangerNS.Properties.Resources.bgImageTile;
             this.ClientSize = new System.Drawing.Size(1612, 767);
             this.Controls.Add(this.btnRestartOculusService);
@@ -714,10 +715,9 @@
             this.Controls.Add(this.grpAppsList);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
             this.Name = "OculusHomeIconChanger";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "OculusHomeIconChanger by Jonathan Carewick - alpha 8";
+            this.Text = "OculusHomeIconChanger by Jonathan Carewick - alpha 9";
             this.Load += new System.EventHandler(this.OculusHomeIconChanger_Load);
             this.grpAppsList.ResumeLayout(false);
             this.grpAppsList.PerformLayout();
