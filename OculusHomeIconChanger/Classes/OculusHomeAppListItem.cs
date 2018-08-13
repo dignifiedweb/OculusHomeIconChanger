@@ -44,6 +44,9 @@ namespace OculusHomeIconChangerNS
         [System.ComponentModel.Browsable(false)]
         public string steamID { get; set; }
 
+        [System.ComponentModel.Browsable(false)]
+        public Bitmap cover_landscape_image_large { get; set; }
+
         // Default Constructor
         public OculusHomeAppListItem()
         {

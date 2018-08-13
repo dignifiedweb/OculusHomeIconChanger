@@ -78,6 +78,13 @@ namespace OculusHomeIconChangerNS
         #region "Main Form Load"
         private void OculusHomeIconChanger_Load(object sender, EventArgs e)
         {
+            // Add an up "broken bar" character to the beginning of the label text
+            lblSmallLandscapeImage.Text = Convert.ToChar(166) + " " + lblSmallLandscapeImage.Text;
+            lblCoverLandscapeImage.Text = Convert.ToChar(166) + " " + lblCoverLandscapeImage.Text;
+            lblCoverLandscapeImageLarge.Text = Convert.ToChar(166) + " " + lblCoverLandscapeImageLarge.Text;
+            lblIconImage.Text = Convert.ToChar(166) + " " + lblIconImage.Text;
+            lblCoverSquareImage.Text = Convert.ToChar(166) + " " + lblCoverSquareImage.Text;
+
             // Prevent an unhandled exception by asking user to configure the directory in the app.config
             if (!Directory.Exists(_oculusHomeManifestLocation) || !Directory.Exists(_oculusHomeImagesLocation))
             {
@@ -170,7 +177,7 @@ namespace OculusHomeIconChangerNS
                                     }
 
                                     string cover_landscape_image = imageLoadPath + "cover_landscape_image.jpg";
-                                    string cover_landscape_image_large = imageLoadPath + "cover_landscape_image_large.jpg";
+                                    string cover_landscape_image_large = imageLoadPath + "cover_landscape_image_large.png";
                                     string cover_square_image = imageLoadPath + "cover_square_image.jpg";
                                     string icon_image = imageLoadPath + "icon_image.jpg";
                                     string small_landscape_image = imageLoadPath + "small_landscape_image.jpg";
@@ -180,6 +187,7 @@ namespace OculusHomeIconChangerNS
                                     app.cover_square_image = GetBitmapFromFile(cover_square_image);
                                     app.icon_image = GetBitmapFromFile(icon_image);
                                     app.small_landscape_image = GetBitmapFromFile(small_landscape_image);
+                                    app.cover_landscape_image_large = GetBitmapFromFile(cover_landscape_image_large);
 
                                     _oculusHomeAppsList.Add(app);
                                 }
@@ -398,20 +406,27 @@ namespace OculusHomeIconChangerNS
         private bool SteamGameHasVRSupport(string steamId)
         {
             string steamAppStoreInfo = "";
-            HttpWebRequest request = WebRequest.Create("http://store.steampowered.com/api/appdetails/?appids=" + steamId) as HttpWebRequest;
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            WebHeaderCollection header = response.Headers;
-            var encoding = ASCIIEncoding.ASCII;
-            using (var reader = new System.IO.StreamReader(response.GetResponseStream(), encoding))
+
+            if (steamId == "400940")
             {
-                steamAppStoreInfo = reader.ReadToEnd();
+
             }
 
-            // JCarewick - DEBUG - May 6 2018
-            // LA Noire VR
-            if (steamId == "81292")
+            try
             {
 
+                HttpWebRequest request = WebRequest.Create("http://store.steampowered.com/api/appdetails/?appids=" + steamId) as HttpWebRequest;
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                WebHeaderCollection header = response.Headers;
+                var encoding = ASCIIEncoding.ASCII;
+                using (var reader = new System.IO.StreamReader(response.GetResponseStream(), encoding))
+                {
+                    steamAppStoreInfo = reader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                steamAppStoreInfo = "";
             }
 
             if (steamAppStoreInfo.ToLower().Contains("vr"))
@@ -548,6 +563,10 @@ namespace OculusHomeIconChangerNS
                 Bitmap small_landscape_image = new Bitmap(pic_small_landscape_image.Width, pic_small_landscape_image.Height);
                 pic_small_landscape_image.DrawToBitmap(small_landscape_image, pic_small_landscape_image.ClientRectangle);
                 selectedApp.small_landscape_image = small_landscape_image;
+
+                Bitmap cover_landscape_image_large = new Bitmap(pic_cover_landscape_image_large.Width, pic_cover_landscape_image_large.Height);
+                pic_cover_landscape_image_large.DrawToBitmap(cover_landscape_image_large, pic_cover_landscape_image_large.ClientRectangle);
+                selectedApp.cover_landscape_image_large = cover_landscape_image_large;
 
                 RefreshDataGridViewMain();
             }
@@ -830,7 +849,7 @@ namespace OculusHomeIconChangerNS
                 try
                 {
                     // JCarewick - DEBUG - May 7 2018
-                    string steamCDNLocation, iconImageToUse, coverImageToUse, coverLandscapeToUse, smallLandscapeToUse;
+                    string steamCDNLocation, iconImageToUse, coverImageToUse, coverLandscapeToUse, smallLandscapeToUse, coverImageLargeToUse;
                     if (ConfigurationManager.AppSettings["steamCDNLocation"].ToString().Length > 0)
                     {
                         steamCDNLocation = ConfigurationManager.AppSettings["steamCDNLocation"].ToString();
@@ -838,6 +857,7 @@ namespace OculusHomeIconChangerNS
                         coverImageToUse = ConfigurationManager.AppSettings["coverImageToUse"].ToString();
                         coverLandscapeToUse = ConfigurationManager.AppSettings["coverLandscapeToUse"].ToString();
                         smallLandscapeToUse = ConfigurationManager.AppSettings["smallLandscapeToUse"].ToString();
+                        coverImageLargeToUse = ConfigurationManager.AppSettings["coverLandscapeImageLarge"].ToString();
                     }
                     else
                     {
@@ -846,12 +866,14 @@ namespace OculusHomeIconChangerNS
                         coverImageToUse = "header.jpg";
                         coverLandscapeToUse = "capsule_616x353.jpg";
                         smallLandscapeToUse = "capsule_467x181.jpg";
+                        coverImageLargeToUse = "capsule_616x353.jpg";
                     }
 
                     string iconImageFullPath = steamCDNLocation + steamIdForApp + "/" + iconImageToUse;
                     string coverSquareFullPath = steamCDNLocation + steamIdForApp + "/" + coverImageToUse;
                     string coverLandscapeFullPath = steamCDNLocation + steamIdForApp + "/" + coverLandscapeToUse;
                     string smallLandscapeFullPath = steamCDNLocation + steamIdForApp + "/" + smallLandscapeToUse;
+                    string coverLandScapeLargeFullPath = steamCDNLocation + steamIdForApp + "/" + coverImageLargeToUse;
 
                     // Not used:
                     //string steamHeader292x136 = steamCDNLocation + steamIdForApp + "/header_292x136.jpg";
@@ -859,6 +881,7 @@ namespace OculusHomeIconChangerNS
                     selectedApp.icon_image = new Bitmap(GetBitmapFromWebsite(iconImageFullPath), new Size(245, 115)); // copy @ 245px X 115 (53.33333% of header)
                     selectedApp.cover_square_image = GetBitmapFromWebsite(coverSquareFullPath); // steamHeader 192x192
                     selectedApp.cover_landscape_image = GetBitmapFromWebsite(coverLandscapeFullPath);
+                    selectedApp.cover_landscape_image_large = GetBitmapFromWebsite(coverLandScapeLargeFullPath);
                     selectedApp.small_landscape_image = GetBitmapFromWebsite(smallLandscapeFullPath);
                     selectedApp.icon = new Bitmap((Bitmap)selectedApp.small_landscape_image.Clone(), new Size(ICON_WIDTH, ICON_WIDTH));
 
@@ -934,6 +957,7 @@ namespace OculusHomeIconChangerNS
                         app.cover_landscape_image.Save(imgPath + "\\cover_landscape_image.jpg", ImageFormat.Jpeg);
                         app.cover_square_image.Save(imgPath + "\\cover_square_image.jpg", ImageFormat.Jpeg);
                         app.small_landscape_image.Save(imgPath + "\\small_landscape_image.jpg", ImageFormat.Jpeg);
+                        app.cover_landscape_image_large.Save(imgPath + "\\cover_landscape_image_large.png", ImageFormat.Png);
 
                         photoChangeSuccess = true;
                     }
@@ -1162,6 +1186,7 @@ namespace OculusHomeIconChangerNS
             pic_icon_image.Image = null;
             pic_cover_square_image.Image = null;
             pic_cover_landscape_image.Image = null;
+            pic_cover_landscape_image_large.Image = null;
 
             if (radShowOnlySteamApps.Checked)
             {
@@ -1185,6 +1210,7 @@ namespace OculusHomeIconChangerNS
             pic_cover_square_image.Image = selectedApp.cover_square_image;
             pic_small_landscape_image.Image = selectedApp.small_landscape_image;
             pic_icon_image.Image = selectedApp.icon_image;
+            pic_cover_landscape_image_large.Image = selectedApp.cover_landscape_image_large;
         }
 
         private void ApplySelectedFilter()
@@ -1240,6 +1266,9 @@ namespace OculusHomeIconChangerNS
                         break;
                     case "pic_cover_landscape_image":
                         selectedApp.cover_landscape_image = (Bitmap)picBox.Image;
+                        break;
+                    case "pic_cover_landscape_image_large":
+                        selectedApp.cover_landscape_image_large = (Bitmap)picBox.Image;
                         break;
                 }
 

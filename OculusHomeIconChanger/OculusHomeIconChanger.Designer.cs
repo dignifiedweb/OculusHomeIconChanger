@@ -46,6 +46,9 @@
             this.lblSearch = new System.Windows.Forms.Label();
             this.dgvAppList = new System.Windows.Forms.DataGridView();
             this.grpEditApp = new System.Windows.Forms.GroupBox();
+            this.btn_pic_cover_landscape_image_large = new System.Windows.Forms.Button();
+            this.lblCoverLandscapeImageLarge = new System.Windows.Forms.Label();
+            this.pic_cover_landscape_image_large = new System.Windows.Forms.PictureBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.txtSteamIDFound = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -69,7 +72,7 @@
             this.button6 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.button7 = new System.Windows.Forms.Button();
-            this.lblsmall_landscape_image = new System.Windows.Forms.Label();
+            this.lblSmallLandscapeImage = new System.Windows.Forms.Label();
             this.pic_icon_image = new System.Windows.Forms.PictureBox();
             this.btn_pic_small_landscape_image = new System.Windows.Forms.Button();
             this.lblIconImage = new System.Windows.Forms.Label();
@@ -78,7 +81,6 @@
             this.btn_pic_cover_square_image = new System.Windows.Forms.Button();
             this.pic_cover_square_image = new System.Windows.Forms.PictureBox();
             this.lblCoverLandscapeImage = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             this.pic_cover_landscape_image = new System.Windows.Forms.PictureBox();
             this.txtAppName = new System.Windows.Forms.TextBox();
             this.btn_pic_icon_image = new System.Windows.Forms.Button();
@@ -92,6 +94,7 @@
             this.grpSortList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvAppList)).BeginInit();
             this.grpEditApp.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pic_cover_landscape_image_large)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.grpFormatIcons.SuspendLayout();
@@ -113,9 +116,9 @@
             this.grpAppsList.Controls.Add(this.lblSearch);
             this.grpAppsList.Controls.Add(this.dgvAppList);
             this.grpAppsList.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpAppsList.Location = new System.Drawing.Point(12, 12);
+            this.grpAppsList.Location = new System.Drawing.Point(12, 3);
             this.grpAppsList.Name = "grpAppsList";
-            this.grpAppsList.Size = new System.Drawing.Size(543, 681);
+            this.grpAppsList.Size = new System.Drawing.Size(543, 690);
             this.grpAppsList.TabIndex = 6;
             this.grpAppsList.TabStop = false;
             // 
@@ -282,11 +285,14 @@
             // grpEditApp
             // 
             this.grpEditApp.BackColor = System.Drawing.Color.Transparent;
+            this.grpEditApp.Controls.Add(this.btn_pic_cover_landscape_image_large);
+            this.grpEditApp.Controls.Add(this.lblCoverLandscapeImageLarge);
+            this.grpEditApp.Controls.Add(this.pic_cover_landscape_image_large);
             this.grpEditApp.Controls.Add(this.groupBox2);
             this.grpEditApp.Controls.Add(this.label5);
             this.grpEditApp.Controls.Add(this.btn_pic_cover_landscape_image);
             this.grpEditApp.Controls.Add(this.grpFormatIcons);
-            this.grpEditApp.Controls.Add(this.lblsmall_landscape_image);
+            this.grpEditApp.Controls.Add(this.lblSmallLandscapeImage);
             this.grpEditApp.Controls.Add(this.pic_icon_image);
             this.grpEditApp.Controls.Add(this.btn_pic_small_landscape_image);
             this.grpEditApp.Controls.Add(this.lblIconImage);
@@ -295,16 +301,46 @@
             this.grpEditApp.Controls.Add(this.btn_pic_cover_square_image);
             this.grpEditApp.Controls.Add(this.pic_cover_square_image);
             this.grpEditApp.Controls.Add(this.lblCoverLandscapeImage);
-            this.grpEditApp.Controls.Add(this.button1);
             this.grpEditApp.Controls.Add(this.pic_cover_landscape_image);
             this.grpEditApp.Controls.Add(this.txtAppName);
             this.grpEditApp.Controls.Add(this.btn_pic_icon_image);
             this.grpEditApp.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpEditApp.Location = new System.Drawing.Point(639, 12);
+            this.grpEditApp.Location = new System.Drawing.Point(639, 3);
             this.grpEditApp.Name = "grpEditApp";
-            this.grpEditApp.Size = new System.Drawing.Size(960, 681);
+            this.grpEditApp.Size = new System.Drawing.Size(960, 948);
             this.grpEditApp.TabIndex = 8;
             this.grpEditApp.TabStop = false;
+            // 
+            // btn_pic_cover_landscape_image_large
+            // 
+            this.btn_pic_cover_landscape_image_large.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_pic_cover_landscape_image_large.Location = new System.Drawing.Point(642, 920);
+            this.btn_pic_cover_landscape_image_large.Name = "btn_pic_cover_landscape_image_large";
+            this.btn_pic_cover_landscape_image_large.Size = new System.Drawing.Size(90, 23);
+            this.btn_pic_cover_landscape_image_large.TabIndex = 30;
+            this.btn_pic_cover_landscape_image_large.Text = "change image";
+            this.btn_pic_cover_landscape_image_large.UseVisualStyleBackColor = true;
+            this.btn_pic_cover_landscape_image_large.Click += new System.EventHandler(this.btnChangeImageButtons);
+            // 
+            // lblCoverLandscapeImageLarge
+            // 
+            this.lblCoverLandscapeImageLarge.AutoSize = true;
+            this.lblCoverLandscapeImageLarge.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCoverLandscapeImageLarge.Location = new System.Drawing.Point(12, 924);
+            this.lblCoverLandscapeImageLarge.Name = "lblCoverLandscapeImageLarge";
+            this.lblCoverLandscapeImageLarge.Size = new System.Drawing.Size(196, 15);
+            this.lblCoverLandscapeImageLarge.TabIndex = 29;
+            this.lblCoverLandscapeImageLarge.Text = "cover_landscape_image_large.png";
+            // 
+            // pic_cover_landscape_image_large
+            // 
+            this.pic_cover_landscape_image_large.BackColor = System.Drawing.Color.White;
+            this.pic_cover_landscape_image_large.Location = new System.Drawing.Point(12, 510);
+            this.pic_cover_landscape_image_large.Name = "pic_cover_landscape_image_large";
+            this.pic_cover_landscape_image_large.Size = new System.Drawing.Size(720, 405);
+            this.pic_cover_landscape_image_large.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pic_cover_landscape_image_large.TabIndex = 28;
+            this.pic_cover_landscape_image_large.TabStop = false;
             // 
             // groupBox2
             // 
@@ -316,7 +352,7 @@
             this.groupBox2.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox2.Location = new System.Drawing.Point(6, 54);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(359, 156);
+            this.groupBox2.Size = new System.Drawing.Size(359, 61);
             this.groupBox2.TabIndex = 14;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Load Image Data From The Web";
@@ -420,10 +456,10 @@
             // 
             // btn_pic_cover_landscape_image
             // 
-            this.btn_pic_cover_landscape_image.Font = new System.Drawing.Font("Calibri", 10F);
-            this.btn_pic_cover_landscape_image.Location = new System.Drawing.Point(130, 644);
+            this.btn_pic_cover_landscape_image.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_pic_cover_landscape_image.Location = new System.Drawing.Point(279, 456);
             this.btn_pic_cover_landscape_image.Name = "btn_pic_cover_landscape_image";
-            this.btn_pic_cover_landscape_image.Size = new System.Drawing.Size(119, 23);
+            this.btn_pic_cover_landscape_image.Size = new System.Drawing.Size(90, 23);
             this.btn_pic_cover_landscape_image.TabIndex = 15;
             this.btn_pic_cover_landscape_image.Text = "change image";
             this.btn_pic_cover_landscape_image.UseVisualStyleBackColor = true;
@@ -438,16 +474,16 @@
             this.grpFormatIcons.Controls.Add(this.rad_icon_image_zoom);
             this.grpFormatIcons.Controls.Add(this.groupBox3);
             this.grpFormatIcons.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpFormatIcons.Location = new System.Drawing.Point(390, 54);
+            this.grpFormatIcons.Location = new System.Drawing.Point(451, 12);
             this.grpFormatIcons.Name = "grpFormatIcons";
-            this.grpFormatIcons.Size = new System.Drawing.Size(359, 156);
+            this.grpFormatIcons.Size = new System.Drawing.Size(503, 95);
             this.grpFormatIcons.TabIndex = 13;
             this.grpFormatIcons.TabStop = false;
             this.grpFormatIcons.Text = "Format icon with current loaded Web Image";
             // 
             // btnChooseBgColor
             // 
-            this.btnChooseBgColor.Location = new System.Drawing.Point(24, 98);
+            this.btnChooseBgColor.Location = new System.Drawing.Point(260, 30);
             this.btnChooseBgColor.Name = "btnChooseBgColor";
             this.btnChooseBgColor.Size = new System.Drawing.Size(170, 46);
             this.btnChooseBgColor.TabIndex = 11;
@@ -458,7 +494,7 @@
             // rad_icon_image_stretched
             // 
             this.rad_icon_image_stretched.AutoSize = true;
-            this.rad_icon_image_stretched.Location = new System.Drawing.Point(24, 72);
+            this.rad_icon_image_stretched.Location = new System.Drawing.Point(24, 64);
             this.rad_icon_image_stretched.Name = "rad_icon_image_stretched";
             this.rad_icon_image_stretched.Size = new System.Drawing.Size(88, 23);
             this.rad_icon_image_stretched.TabIndex = 10;
@@ -469,7 +505,7 @@
             // rad_icon_image_center
             // 
             this.rad_icon_image_center.AutoSize = true;
-            this.rad_icon_image_center.Location = new System.Drawing.Point(24, 49);
+            this.rad_icon_image_center.Location = new System.Drawing.Point(24, 42);
             this.rad_icon_image_center.Name = "rad_icon_image_center";
             this.rad_icon_image_center.Size = new System.Drawing.Size(176, 23);
             this.rad_icon_image_center.TabIndex = 9;
@@ -481,7 +517,7 @@
             // 
             this.rad_icon_image_zoom.AutoSize = true;
             this.rad_icon_image_zoom.Checked = true;
-            this.rad_icon_image_zoom.Location = new System.Drawing.Point(24, 26);
+            this.rad_icon_image_zoom.Location = new System.Drawing.Point(24, 21);
             this.rad_icon_image_zoom.Name = "rad_icon_image_zoom";
             this.rad_icon_image_zoom.Size = new System.Drawing.Size(213, 23);
             this.rad_icon_image_zoom.TabIndex = 8;
@@ -550,19 +586,20 @@
             this.button7.Text = "Old VR Kiosk TMP";
             this.button7.UseVisualStyleBackColor = true;
             // 
-            // lblsmall_landscape_image
+            // lblSmallLandscapeImage
             // 
-            this.lblsmall_landscape_image.AutoSize = true;
-            this.lblsmall_landscape_image.Location = new System.Drawing.Point(5, 224);
-            this.lblsmall_landscape_image.Name = "lblsmall_landscape_image";
-            this.lblsmall_landscape_image.Size = new System.Drawing.Size(190, 19);
-            this.lblsmall_landscape_image.TabIndex = 12;
-            this.lblsmall_landscape_image.Text = "small_landscape_image.jpg";
+            this.lblSmallLandscapeImage.AutoSize = true;
+            this.lblSmallLandscapeImage.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSmallLandscapeImage.Location = new System.Drawing.Point(8, 219);
+            this.lblSmallLandscapeImage.Name = "lblSmallLandscapeImage";
+            this.lblSmallLandscapeImage.Size = new System.Drawing.Size(160, 15);
+            this.lblSmallLandscapeImage.TabIndex = 12;
+            this.lblSmallLandscapeImage.Text = "small_landscape_image.jpg";
             // 
             // pic_icon_image
             // 
             this.pic_icon_image.BackColor = System.Drawing.Color.White;
-            this.pic_icon_image.Location = new System.Drawing.Point(385, 249);
+            this.pic_icon_image.Location = new System.Drawing.Point(382, 121);
             this.pic_icon_image.Name = "pic_icon_image";
             this.pic_icon_image.Size = new System.Drawing.Size(192, 192);
             this.pic_icon_image.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -571,10 +608,10 @@
             // 
             // btn_pic_small_landscape_image
             // 
-            this.btn_pic_small_landscape_image.Font = new System.Drawing.Font("Calibri", 10F);
-            this.btn_pic_small_landscape_image.Location = new System.Drawing.Point(85, 345);
+            this.btn_pic_small_landscape_image.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_pic_small_landscape_image.Location = new System.Drawing.Point(189, 215);
             this.btn_pic_small_landscape_image.Name = "btn_pic_small_landscape_image";
-            this.btn_pic_small_landscape_image.Size = new System.Drawing.Size(119, 23);
+            this.btn_pic_small_landscape_image.Size = new System.Drawing.Size(90, 23);
             this.btn_pic_small_landscape_image.TabIndex = 11;
             this.btn_pic_small_landscape_image.Text = "change image";
             this.btn_pic_small_landscape_image.UseVisualStyleBackColor = true;
@@ -583,16 +620,17 @@
             // lblIconImage
             // 
             this.lblIconImage.AutoSize = true;
-            this.lblIconImage.Location = new System.Drawing.Point(384, 224);
+            this.lblIconImage.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblIconImage.Location = new System.Drawing.Point(384, 321);
             this.lblIconImage.Name = "lblIconImage";
-            this.lblIconImage.Size = new System.Drawing.Size(108, 19);
+            this.lblIconImage.Size = new System.Drawing.Size(90, 15);
             this.lblIconImage.TabIndex = 6;
             this.lblIconImage.Text = "icon_image.jpg";
             // 
             // pic_small_landscape_image
             // 
             this.pic_small_landscape_image.BackColor = System.Drawing.Color.White;
-            this.pic_small_landscape_image.Location = new System.Drawing.Point(9, 249);
+            this.pic_small_landscape_image.Location = new System.Drawing.Point(9, 121);
             this.pic_small_landscape_image.Name = "pic_small_landscape_image";
             this.pic_small_landscape_image.Size = new System.Drawing.Size(270, 90);
             this.pic_small_landscape_image.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -602,18 +640,19 @@
             // lblCoverSquareImage
             // 
             this.lblCoverSquareImage.AutoSize = true;
-            this.lblCoverSquareImage.Location = new System.Drawing.Point(587, 224);
+            this.lblCoverSquareImage.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCoverSquareImage.Location = new System.Drawing.Point(591, 489);
             this.lblCoverSquareImage.Name = "lblCoverSquareImage";
-            this.lblCoverSquareImage.Size = new System.Drawing.Size(168, 19);
+            this.lblCoverSquareImage.Size = new System.Drawing.Size(140, 15);
             this.lblCoverSquareImage.TabIndex = 9;
             this.lblCoverSquareImage.Text = "cover_square_image.jpg";
             // 
             // btn_pic_cover_square_image
             // 
-            this.btn_pic_cover_square_image.Font = new System.Drawing.Font("Calibri", 10F);
-            this.btn_pic_cover_square_image.Location = new System.Drawing.Point(712, 615);
+            this.btn_pic_cover_square_image.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_pic_cover_square_image.Location = new System.Drawing.Point(861, 485);
             this.btn_pic_cover_square_image.Name = "btn_pic_cover_square_image";
-            this.btn_pic_cover_square_image.Size = new System.Drawing.Size(119, 23);
+            this.btn_pic_cover_square_image.Size = new System.Drawing.Size(90, 23);
             this.btn_pic_cover_square_image.TabIndex = 8;
             this.btn_pic_cover_square_image.Text = "change image";
             this.btn_pic_cover_square_image.UseVisualStyleBackColor = true;
@@ -622,7 +661,7 @@
             // pic_cover_square_image
             // 
             this.pic_cover_square_image.BackColor = System.Drawing.Color.White;
-            this.pic_cover_square_image.Location = new System.Drawing.Point(591, 249);
+            this.pic_cover_square_image.Location = new System.Drawing.Point(591, 121);
             this.pic_cover_square_image.Name = "pic_cover_square_image";
             this.pic_cover_square_image.Size = new System.Drawing.Size(360, 360);
             this.pic_cover_square_image.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -632,26 +671,17 @@
             // lblCoverLandscapeImage
             // 
             this.lblCoverLandscapeImage.AutoSize = true;
-            this.lblCoverLandscapeImage.Location = new System.Drawing.Point(5, 414);
+            this.lblCoverLandscapeImage.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCoverLandscapeImage.Location = new System.Drawing.Point(8, 460);
             this.lblCoverLandscapeImage.Name = "lblCoverLandscapeImage";
-            this.lblCoverLandscapeImage.Size = new System.Drawing.Size(190, 19);
+            this.lblCoverLandscapeImage.Size = new System.Drawing.Size(159, 15);
             this.lblCoverLandscapeImage.TabIndex = 5;
             this.lblCoverLandscapeImage.Text = "cover_landscape_image.jpg";
-            // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("Calibri", 10F);
-            this.button1.Location = new System.Drawing.Point(35, 879);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(119, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "change image";
-            this.button1.UseVisualStyleBackColor = true;
             // 
             // pic_cover_landscape_image
             // 
             this.pic_cover_landscape_image.BackColor = System.Drawing.Color.White;
-            this.pic_cover_landscape_image.Location = new System.Drawing.Point(9, 436);
+            this.pic_cover_landscape_image.Location = new System.Drawing.Point(9, 249);
             this.pic_cover_landscape_image.Name = "pic_cover_landscape_image";
             this.pic_cover_landscape_image.Size = new System.Drawing.Size(360, 202);
             this.pic_cover_landscape_image.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -670,10 +700,10 @@
             // 
             // btn_pic_icon_image
             // 
-            this.btn_pic_icon_image.Font = new System.Drawing.Font("Calibri", 10F);
-            this.btn_pic_icon_image.Location = new System.Drawing.Point(422, 447);
+            this.btn_pic_icon_image.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btn_pic_icon_image.Location = new System.Drawing.Point(484, 317);
             this.btn_pic_icon_image.Name = "btn_pic_icon_image";
-            this.btn_pic_icon_image.Size = new System.Drawing.Size(119, 23);
+            this.btn_pic_icon_image.Size = new System.Drawing.Size(90, 23);
             this.btn_pic_icon_image.TabIndex = 1;
             this.btn_pic_icon_image.Text = "change image";
             this.btn_pic_icon_image.UseVisualStyleBackColor = true;
@@ -708,7 +738,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.BackgroundImage = global::OculusHomeIconChangerNS.Properties.Resources.bgImageTile;
-            this.ClientSize = new System.Drawing.Size(1612, 767);
+            this.ClientSize = new System.Drawing.Size(1612, 961);
             this.Controls.Add(this.btnRestartOculusService);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.grpEditApp);
@@ -717,7 +747,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "OculusHomeIconChanger";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "OculusHomeIconChanger by Jonathan Carewick - alpha 9";
+            this.Text = "OculusHomeIconChanger by Jonathan Carewick - alpha 10";
             this.Load += new System.EventHandler(this.OculusHomeIconChanger_Load);
             this.grpAppsList.ResumeLayout(false);
             this.grpAppsList.PerformLayout();
@@ -729,6 +759,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvAppList)).EndInit();
             this.grpEditApp.ResumeLayout(false);
             this.grpEditApp.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pic_cover_landscape_image_large)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -756,12 +787,11 @@
         private System.Windows.Forms.PictureBox pic_icon_image;
         private System.Windows.Forms.Label lblIconImage;
         private System.Windows.Forms.Label lblCoverLandscapeImage;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.PictureBox pic_cover_landscape_image;
         private System.Windows.Forms.Label lblCoverSquareImage;
         private System.Windows.Forms.Button btn_pic_cover_square_image;
         private System.Windows.Forms.PictureBox pic_cover_square_image;
-        private System.Windows.Forms.Label lblsmall_landscape_image;
+        private System.Windows.Forms.Label lblSmallLandscapeImage;
         private System.Windows.Forms.Button btn_pic_small_landscape_image;
         private System.Windows.Forms.PictureBox pic_small_landscape_image;
         private System.Windows.Forms.GroupBox grpSortList;
@@ -800,5 +830,8 @@
         private System.Windows.Forms.ToolTip toolTipRestartOculusButton;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtSteamIDFound;
+        private System.Windows.Forms.PictureBox pic_cover_landscape_image_large;
+        private System.Windows.Forms.Button btn_pic_cover_landscape_image_large;
+        private System.Windows.Forms.Label lblCoverLandscapeImageLarge;
     }
 }

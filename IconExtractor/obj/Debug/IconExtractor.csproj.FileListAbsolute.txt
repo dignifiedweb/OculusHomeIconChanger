@@ -8,5 +8,6 @@ D:\Projects\Programming\VRKiosk\VRKiosk-VisualStudio\IconExtractor\obj\Debug\Ico
 D:\Projects\Programming\VRKiosk\VRKiosk-VisualStudio\IconExtractor\obj\Debug\IconExtractor.pdb
 D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\IconExtractor\bin\Debug\IconExtractor.dll
 D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\IconExtractor\bin\Debug\IconExtractor.pdb
+D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\IconExtractor\obj\Debug\IconExtractor.csprojResolveAssemblyReference.cache
 D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\IconExtractor\obj\Debug\IconExtractor.dll
 D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\IconExtractor\obj\Debug\IconExtractor.pdb
