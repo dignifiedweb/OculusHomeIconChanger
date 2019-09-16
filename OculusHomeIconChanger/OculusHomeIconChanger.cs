@@ -445,12 +445,6 @@ namespace OculusHomeIconChangerNS
                                            where apps.name.ToLower().Equals(appname.ToLower())
                                            select apps).ToList();
 
-            // JCarewick - DEBUG - May 6 2018  -delete me
-            if (appname.Contains("Titanic"))
-            {
-
-            }
-
             // If App not found, try stripping out a " VR" at the end of title
             if (steamAppList.Count < 1)
             {
@@ -1279,5 +1273,106 @@ namespace OculusHomeIconChangerNS
 
 
         #endregion
+
+        private void btnAddNewApp_Click(object sender, EventArgs e)
+        {
+            string exeDirPath = Application.StartupPath;
+            Process proc = new Process();            
+            proc.StartInfo.FileName = "powershell.exe";
+            proc.StartInfo.Arguments = "-Executionpolicy bypass -file \"" + exeDirPath + "\\AddtoOculus.ps1\" \"" + _oculusHomeManifestLocation + "\" \"" + _oculusHomeImagesLocation + "\"";
+            proc.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+            proc.StartInfo.UseShellExecute = false;
+            proc.StartInfo.RedirectStandardOutput = true;
+            proc.Start();
+
+            string powershellOutput = "";
+            while (!proc.StandardOutput.EndOfStream)
+            {
+                powershellOutput = powershellOutput + proc.StandardOutput.ReadLine() + "\r\n";
+            }
+
+            // Get First file, then second file
+            //GetOculusHomeApp_AssetsJsonFromPath(filenameFullPath);
+
+            if (powershellOutput.Length > 0)
+            {
+
+                string[] parsedOutput = powershellOutput.Split(
+                    new[] { "[ParseWithThis]" },
+                    StringSplitOptions.None
+                );
+
+                if (parsedOutput.Length > 0)
+                {
+                    string[] lines = parsedOutput[1].Split(
+                        new[] { Environment.NewLine },
+                        StringSplitOptions.None
+                    );
+
+                    if (lines.Length > 0)
+                    {
+                        string canonicalName = lines[1].Replace(".json", "");
+                        bool appJsonFileExists = File.Exists(_oculusHomeManifestLocation + "\\" + canonicalName + ".json");
+                        bool appAssetsJsonExists = File.Exists(_oculusHomeManifestLocation + "\\" + canonicalName + "_assets.json");
+                        bool appImageFolderExists = Directory.Exists(_oculusHomeImagesLocation + "\\" + canonicalName + "_assets");
+                        string jsonFileFullPath = _oculusHomeManifestLocation + "\\" + canonicalName + ".json";
+                        string jsonAssetsFileFullPath = _oculusHomeManifestLocation + "\\" + canonicalName + "_assets.json";
+
+                        if (appJsonFileExists && appAssetsJsonExists && appImageFolderExists)
+                        {
+                            OculusHomeAppJson oculusHomeAppJson = GetOculusHomeAppJsonFromPath(_oculusHomeManifestLocation + "\\" + canonicalName + ".json");
+                            OculusHomeApp_AssetsJson oculusHomeApp_AssetsJson = GetOculusHomeApp_AssetsJsonFromPath(_oculusHomeManifestLocation + "\\" + canonicalName + "_assets.json");
+
+                            OculusHomeAppListItem app = new OculusHomeAppListItem();
+                            app.canonicalName = oculusHomeAppJson.canonicalName;
+                            app.displayName = oculusHomeAppJson.displayName;
+                            app.displayNameOrig = (string)oculusHomeAppJson.displayName.Clone();
+                            app.launchFile = oculusHomeAppJson.launchFile;
+                            app.fileModifiedDateTime = File.GetLastWriteTime(jsonFileFullPath);
+
+                            string imageLoadPath = _oculusHomeImagesLocation + "\\" + app.canonicalName + "_assets\\";
+
+                            // JCarewick - DEBUG - May 6 2018
+                            if (jsonAssetsFileFullPath.Contains(_oculusHomeManifestSecondaryLocation) && _oculusHomeManifestSecondaryLocation.Length > 0)
+                            {
+                                imageLoadPath = _oculusHomeImagesSecondaryLocation + "\\" + app.canonicalName + "_assets\\";
+                            }
+
+                            string cover_landscape_image = imageLoadPath + "cover_landscape_image.jpg";
+                            string cover_landscape_image_large = imageLoadPath + "cover_landscape_image_large.png";
+                            string cover_square_image = imageLoadPath + "cover_square_image.jpg";
+                            string icon_image = imageLoadPath + "icon_image.jpg";
+                            string small_landscape_image = imageLoadPath + "small_landscape_image.jpg";
+
+                            app.icon = GetBitmapFromFile(icon_image, true);
+                            app.cover_landscape_image = GetBitmapFromFile(cover_landscape_image);
+                            app.cover_square_image = GetBitmapFromFile(cover_square_image);
+                            app.icon_image = GetBitmapFromFile(icon_image);
+                            app.small_landscape_image = GetBitmapFromFile(small_landscape_image);
+                            app.cover_landscape_image_large = GetBitmapFromFile(cover_landscape_image_large);
+
+                            // Add app & show all apps (filter by steam won't work)
+                            _oculusHomeAppsList.Add(app);
+                            radShowAllApps.Select();
+
+                            // Re-order the list
+                            _oculusHomeAppsList = _oculusHomeAppsList.OrderByDescending(i => i.fileModifiedDateTime).ToList();
+
+                            // Refresh datagrid and refresh app selected
+                            RefreshDataGridViewMain();
+                            SelectAppInDataGrid();
+                            ApplySelectedFilter();
+
+                            MessageBox.Show("App Added - should be selected now");
+                        }
+                    }
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("Error running powershell script", "ERROR - OculusHomeIconChanger Add New Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
 }

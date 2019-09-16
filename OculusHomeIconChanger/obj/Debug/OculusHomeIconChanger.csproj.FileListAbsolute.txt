@@ -30,3 +30,4 @@ D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\OculusHomeIconC
 D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\OculusHomeIconChanger\obj\Debug\OculusHomeIconChanger.csproj.GenerateResource.Cache
 D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\OculusHomeIconChanger\obj\Debug\OculusHomeIconChanger.exe
 D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\OculusHomeIconChanger\obj\Debug\OculusHomeIconChanger.pdb
+D:\Projects\Programming\OculusHomeIconEdit\OculusHomeIconChanger\OculusHomeIconChanger\bin\Debug\AddtoOculus.ps1

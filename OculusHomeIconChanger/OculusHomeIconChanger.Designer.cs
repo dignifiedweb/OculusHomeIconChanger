@@ -88,6 +88,7 @@
             this.btnSave = new System.Windows.Forms.Button();
             this.btnRestartOculusService = new System.Windows.Forms.Button();
             this.toolTipRestartOculusButton = new System.Windows.Forms.ToolTip(this.components);
+            this.btnAddNewApp = new System.Windows.Forms.Button();
             this.grpAppsList.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.grpDisplayFilter.SuspendLayout();
@@ -713,7 +714,7 @@
             // 
             this.btnSave.Enabled = false;
             this.btnSave.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSave.Location = new System.Drawing.Point(12, 700);
+            this.btnSave.Location = new System.Drawing.Point(12, 752);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(168, 51);
             this.btnSave.TabIndex = 9;
@@ -724,13 +725,24 @@
             // btnRestartOculusService
             // 
             this.btnRestartOculusService.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnRestartOculusService.Location = new System.Drawing.Point(384, 699);
+            this.btnRestartOculusService.Location = new System.Drawing.Point(384, 751);
             this.btnRestartOculusService.Name = "btnRestartOculusService";
             this.btnRestartOculusService.Size = new System.Drawing.Size(171, 51);
             this.btnRestartOculusService.TabIndex = 10;
             this.btnRestartOculusService.Text = "Restart Oculus Service";
             this.btnRestartOculusService.UseVisualStyleBackColor = true;
             this.btnRestartOculusService.Click += new System.EventHandler(this.btnRestartOculusService_Click);
+            // 
+            // btnAddNewApp
+            // 
+            this.btnAddNewApp.Font = new System.Drawing.Font("Calibri", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAddNewApp.Location = new System.Drawing.Point(12, 695);
+            this.btnAddNewApp.Name = "btnAddNewApp";
+            this.btnAddNewApp.Size = new System.Drawing.Size(168, 51);
+            this.btnAddNewApp.TabIndex = 11;
+            this.btnAddNewApp.Text = "Add New App";
+            this.btnAddNewApp.UseVisualStyleBackColor = true;
+            this.btnAddNewApp.Click += new System.EventHandler(this.btnAddNewApp_Click);
             // 
             // OculusHomeIconChanger
             // 
@@ -739,6 +751,7 @@
             this.AutoScroll = true;
             this.BackgroundImage = global::OculusHomeIconChangerNS.Properties.Resources.bgImageTile;
             this.ClientSize = new System.Drawing.Size(1612, 961);
+            this.Controls.Add(this.btnAddNewApp);
             this.Controls.Add(this.btnRestartOculusService);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.grpEditApp);
@@ -747,7 +760,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "OculusHomeIconChanger";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "OculusHomeIconChanger by Jonathan Carewick - alpha 10";
+            this.Text = "OculusHomeIconChanger by Jonathan Carewick - alpha 11";
             this.Load += new System.EventHandler(this.OculusHomeIconChanger_Load);
             this.grpAppsList.ResumeLayout(false);
             this.grpAppsList.PerformLayout();
@@ -833,5 +846,6 @@
         private System.Windows.Forms.PictureBox pic_cover_landscape_image_large;
         private System.Windows.Forms.Button btn_pic_cover_landscape_image_large;
         private System.Windows.Forms.Label lblCoverLandscapeImageLarge;
+        private System.Windows.Forms.Button btnAddNewApp;
     }
 }
